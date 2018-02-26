@@ -19,9 +19,6 @@
         "illuminate/support": "5.4.*"
     },
     "autoload": {
-        "files": [
-            "src/helpers/helpers.php"
-        ],
         "psr-4": {
             "Bantenprov\\Seleksi\\": "src"
         }
