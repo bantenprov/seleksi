@@ -27,14 +27,14 @@ class SeleksiController extends Controller
      *
      * @return void
      */
-    protected $pendaftaranModel;
+    protected $pendaftaran;
     protected $seleksi;
     protected $user;
 
     public function __construct(Seleksi $seleksi, Pendaftaran $pendaftaran, User $user)
     {
         $this->seleksi      = $seleksi;
-        $this->pendaftaranModel    = $pendaftaran;
+        $this->pendaftaran    = $pendaftaran;
         $this->user             = $user;
     }
 
@@ -78,7 +78,7 @@ class SeleksiController extends Controller
     {
         $response = [];
 
-        $pendaftaran = $this->pendaftaranModel->all();
+        $pendaftaran = $this->pendaftaran->all();
         $users_special = $this->user->all();
         $users_standar = $this->user->find(\Auth::User()->id);
         $current_user = \Auth::User();
