@@ -115,7 +115,7 @@ class SeleksiController extends Controller
     public function store(Request $request)
     {
         $seleksi = $this->seleksi;
-        $current_user_id = \Auth::user()->id;
+        $current_user_id = $request->user_id;
 
         $validator = Validator::make($request->all(), [
             'kegiatan_id' => 'required',
@@ -132,15 +132,15 @@ class SeleksiController extends Controller
             } else {
                 $seleksi->kegiatan_id = $request->input('kegiatan_id');
                 $seleksi->user_id = $current_user_id;
-                $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi');
-                $seleksi->save();
+                $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi')." 00:00:00";
+                $seleksi->save();                
 
                 $response['message'] = 'success';
             }
         } else {
             $seleksi->kegiatan_id = $request->input('kegiatan_id');
             $seleksi->user_id = $current_user_id;
-            $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi');
+            $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi')." 00:00:00";
             $seleksi->save();
             $response['message'] = 'success';
         }

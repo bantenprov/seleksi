@@ -17,9 +17,9 @@
         <div class="form-row">
           <div class="col-md">
             <validate tag="div">
-              <label for="model.tannggal_seleksi">Tanggal Seleksi</label>
-            <input class="form-control" v-model="model.tannggal_seleksi" required autofocus name="tannggal_seleksi" type="date" placeholder="Tanggal Seleksi">
-            <field-messages name="tannggal_seleksi" show="$invalid && $submitted" class="text-danger"> 
+              <label for="model.tanggal_seleksi">Tanggal Seleksi</label>
+            <input class="form-control" v-model="model.tanggal_seleksi" required autofocus name="tanggal_seleksi" type="date" placeholder="Tanggal Seleksi">
+            <field-messages name="tanggal_seleksi" show="$invalid && $submitted" class="text-danger"> 
               <small class="form-text text-danger" slot="required">Tanggal Seleksi is a required field</small>
             </field-messages>
             </validate> 
@@ -98,7 +98,7 @@ export default {
     return {
       state: {},
       model: {
-        tannggal_seleksi: "",
+        tanggal_seleksi: "",
         user: "",
         kegiatan: "",
       },
@@ -115,7 +115,7 @@ export default {
         return;
       } else {
         axios.post('api/seleksi', {
-            tannggal_seleksi: this.model.tannggal_seleksi,
+            tanggal_seleksi: this.model.tanggal_seleksi,
             kegiatan_id: this.model.kegiatan.id,
             user_id: this.model.user.id
           })
@@ -138,7 +138,7 @@ export default {
     },
     reset() {
       this.model = {
-          tannggal_seleksi: ""
+          tanggal_seleksi: ""
       };
     },
     back() {
