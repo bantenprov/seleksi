@@ -78,7 +78,7 @@ class SeleksiController extends Controller
     {
         $response = [];
 
-        $pendaftaran = $this->pendaftaran->all();
+        $pendaftarans = $this->pendaftaran->all();
         $users_special = $this->user->all();
         $users_standar = $this->user->find(\Auth::User()->id);
         $current_user = \Auth::User();
@@ -99,8 +99,12 @@ class SeleksiController extends Controller
 
         array_set($current_user, 'label', $current_user->name);
 
+        foreach($pendaftarans as $pendaftaran){
+            array_set($pendaftaran, 'label', $pendaftaran->kegiatan->description);
+        }
+
         $response['current_user'] = $current_user;
-        $response['pendaftaran'] = $pendaftaran;
+        $response['pendaftaran'] = $pendaftarans;
         $response['status'] = true;
 
         return response()->json($response);
