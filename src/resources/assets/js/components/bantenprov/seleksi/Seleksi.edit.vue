@@ -30,10 +30,10 @@
         <div class="form-row mt-4">
 					<div class="col-md">
 						<validate tag="div">
-						<label for="kegiatan">Kegiatan</label>
-						<v-select name="kegiatan" v-model="model.kegiatan" :options="kegiatan" class="mb-4"></v-select>
+						<label for="pendaftaran">Pendaftaran</label>
+						<v-select name="pendaftaran" v-model="model.pendaftaran" :options="pendaftaran" class="mb-4"></v-select>
 
-						<field-messages name="kegiatan" show="$invalid && $submitted" class="text-danger">
+						<field-messages name="pendaftaran" show="$invalid && $submitted" class="text-danger">
 							<small class="form-text text-success">Looks good!</small>
 							<small class="form-text text-danger" slot="required">Label is a required field</small>
 						</field-messages>
@@ -78,7 +78,7 @@ export default {
           this.model.old_label = response.data.seleksi.label;
           this.model.old_user_id = response.data.seleksi.user_id;
           this.model.tanggal_seleksi = response.data.seleksi.tanggal_seleksi;
-          this.model.kegiatan = response.data.kegiatan;
+          this.model.pendaftaran = response.data.pendaftaran;
         } else {
           alert('Failed');
         }
@@ -90,8 +90,8 @@ export default {
 
       axios.get('api/seleksi/create')
       .then(response => {
-          response.data.kegiatan.forEach(element => {
-            this.kegiatan.push(element);
+          response.data.pendaftaran.forEach(element => {
+            this.pendaftaran.push(element);
           });
           if(response.data.user_special == true){
             response.data.user.forEach(user_element => {
@@ -112,11 +112,11 @@ export default {
       model: {
         tanggal_seleksi: "",
         user: "",
-        kegiatan: "",
+        pendaftaran: "",
         old_label: "",
         old_user_id: ""
       },
-      kegiatan: [],
+      pendaftaran: [],
       user: []
     }
   },
@@ -131,7 +131,7 @@ export default {
             tanggal_seleksi: this.model.tanggal_seleksi,
             old_label: this.model.old_label,
             old_user_id: this.model.old_user_id,
-            kegiatan_id: this.model.kegiatan.id,
+            pendaftaran_id: this.model.pendaftaran.id,
             user_id: this.model.user.id
           })
           .then(response => {

@@ -15,7 +15,7 @@ class CreateSeleksisTable extends Migration
 		Schema::create('seleksis', function(Blueprint $table) {
 			$table->increments('id');
 			$table->integer('user_id');
-			$table->integer('kegiatan_id');
+			$table->integer('pendaftaran_id');
 			$table->dateTime('tanggal_seleksi')->nullable();
 			$table->timestamps();
 			$table->softDeletes();

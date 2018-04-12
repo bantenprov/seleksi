@@ -98,9 +98,9 @@ export default {
           titleClass: 'center aligned'
         },
         {
-          name: 'kegiatan.label',
-          title: 'Kegiatan',
-          sortField: 'kegiatan_id',
+          name: 'pendaftaran.label',
+          title: 'Pendaftaran',
+          sortField: 'pendaftaran_id',
           titleClass: 'center aligned'
         },
         {

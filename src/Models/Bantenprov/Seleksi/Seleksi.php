@@ -16,14 +16,14 @@ class Seleksi extends Model
         'deleted_at'
     ];
     protected $fillable = [
-        'kegiatan_id',
+        'pendaftaran_id',
         'user_id',
         'tanggal_seleksi',
     ];
 
-    public function kegiatan()
+    public function pendaftaran()
     {
-        return $this->belongsTo('Bantenprov\Kegiatan\Models\Bantenprov\Kegiatan\Kegiatan','kegiatan_id');
+        return $this->belongsTo('Bantenprov\Pendaftaran\Models\Bantenprov\Pendaftaran\Pendaftaran','pendaftaran_id');
     }
 
     public function user()

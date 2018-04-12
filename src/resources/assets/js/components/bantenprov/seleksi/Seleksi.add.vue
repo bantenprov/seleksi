@@ -29,10 +29,10 @@
         <div class="form-row mt-4">
 					<div class="col-md">
 						<validate tag="div">
-						<label for="kegiatan">Kegiatan</label>
-						<v-select name="kegiatan" v-model="model.kegiatan" :options="kegiatan" class="mb-4"></v-select>
+						<label for="pendaftaran">Pendaftaran</label>
+						<v-select name="pendaftaran" v-model="model.pendaftaran" :options="pendaftaran" class="mb-4"></v-select>
 
-						<field-messages name="kegiatan" show="$invalid && $submitted" class="text-danger">
+						<field-messages name="pendaftaran" show="$invalid && $submitted" class="text-danger">
 							<small class="form-text text-success">Looks good!</small>
 							<small class="form-text text-danger" slot="required">Label is a required field</small>
 						</field-messages>
@@ -75,8 +75,8 @@ export default {
       if (response.data.status == true) {
         this.model.user = response.data.current_user;
 
-        response.data.kegiatan.forEach(element => {
-          this.kegiatan.push(element);
+        response.data.pendaftaran.forEach(element => {
+          this.pendaftaran.push(element);
         });
         if(response.data.user_special == true){
           response.data.user.forEach(user_element => {
@@ -100,9 +100,9 @@ export default {
       model: {
         tanggal_seleksi: "",
         user: "",
-        kegiatan: "",
+        pendaftaran: "",
       },
-      kegiatan: [],
+      pendaftaran: [],
       user: [],
       user_id: ""
     }
@@ -116,7 +116,7 @@ export default {
       } else {
         axios.post('api/seleksi', {
             tanggal_seleksi: this.model.tanggal_seleksi,
-            kegiatan_id: this.model.kegiatan.id,
+            pendaftaran_id: this.model.pendaftaran.id,
             user_id: this.model.user.id
           })
           .then(response => {

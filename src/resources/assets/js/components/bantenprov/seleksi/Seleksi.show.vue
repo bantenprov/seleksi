@@ -23,7 +23,7 @@
 
         <div class="form-row mt-4">
 					<div class="col-md">
-						<b>Kegiatan :</b> {{ model.kegiatan.label }}
+						<b>Pendaftaran :</b> {{ model.pendaftaran.label }}
 					</div>
 				</div>
 
@@ -50,7 +50,7 @@ export default {
       .then(response => {
         if (response.data.status == true) {
           this.model.tanggal_seleksi = response.data.seleksi.tanggal_seleksi;
-          this.model.kegiatan = response.data.kegiatan;
+          this.model.pendaftaran = response.data.pendaftaran;
           this.model.user = response.data.user;
           this.model.created_at = response.data.seleksi.created_at;
           this.model.updated_at = response.data.seleksi.updated_at;
@@ -65,8 +65,8 @@ export default {
 
       axios.get('api/seleksi/create')
       .then(response => {
-          response.data.kegiatan.forEach(element => {
-            this.kegiatan.push(element);
+          response.data.pendaftaran.forEach(element => {
+            this.pendaftaran.push(element);
           });
       })
       .catch(function(response) {
@@ -79,11 +79,11 @@ export default {
       model: {
         tanggal_seleksi: "",
         user:"",
-        kegiatan: "",
+        pendaftaran: "",
         created_at: "",
         updated_at: "",
       },
-      kegiatan: []
+      pendaftaran: []
     }
   },
   methods: {
@@ -97,7 +97,7 @@ export default {
             label: this.model.label,
             description: this.model.description,
             old_label: this.model.old_label,
-            kegiatan_id: this.model.kegiatan.id
+            pendaftaran_id: this.model.pendaftaran.id
           })
           .then(response => {
             if (response.data.status == true) {

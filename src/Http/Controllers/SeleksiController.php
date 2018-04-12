@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 /* Models */
 use Bantenprov\Seleksi\Models\Bantenprov\Seleksi\Seleksi;
-use Bantenprov\Kegiatan\Models\Bantenprov\Kegiatan\Kegiatan;
+use Bantenprov\Pendaftaran\Models\Bantenprov\Pendaftaran\Pendaftaran;
 use App\User;
 
 /* Etc */
@@ -27,14 +27,14 @@ class SeleksiController extends Controller
      *
      * @return void
      */
-    protected $kegiatanModel;
+    protected $pendaftaranModel;
     protected $seleksi;
     protected $user;
 
-    public function __construct(Seleksi $seleksi, Kegiatan $kegiatan, User $user)
+    public function __construct(Seleksi $seleksi, Pendaftaran $pendaftaran, User $user)
     {
         $this->seleksi      = $seleksi;
-        $this->kegiatanModel    = $kegiatan;
+        $this->pendaftaranModel    = $pendaftaran;
         $this->user             = $user;
     }
 
@@ -48,9 +48,9 @@ class SeleksiController extends Controller
         if (request()->has('sort')) {
             list($sortCol, $sortDir) = explode('|', request()->sort);
 
-            $query = $this->seleksi->with('kegiatan')->with('user')->orderBy($sortCol, $sortDir);
+            $query = $this->seleksi->with('pendaftaran')->with('user')->orderBy($sortCol, $sortDir);
         } else {
-            $query = $this->seleksi->with('kegiatan')->with('user')->orderBy('id', 'asc');
+            $query = $this->seleksi->with('pendaftaran')->with('user')->orderBy('id', 'asc');
         }
 
         if ($request->exists('filter')) {
@@ -78,7 +78,7 @@ class SeleksiController extends Controller
     {
         $response = [];
 
-        $kegiatan = $this->kegiatanModel->all();
+        $pendaftaran = $this->pendaftaranModel->all();
         $users_special = $this->user->all();
         $users_standar = $this->user->find(\Auth::User()->id);
         $current_user = \Auth::User();
@@ -100,7 +100,7 @@ class SeleksiController extends Controller
         array_set($current_user, 'label', $current_user->name);
 
         $response['current_user'] = $current_user;
-        $response['kegiatan'] = $kegiatan;
+        $response['pendaftaran'] = $pendaftaran;
         $response['status'] = true;
 
         return response()->json($response);
@@ -118,7 +118,7 @@ class SeleksiController extends Controller
         $current_user_id = $request->user_id;
 
         $validator = Validator::make($request->all(), [
-            'kegiatan_id' => 'required',
+            'pendaftaran_id' => 'required',
             'user_id' => 'required|max:16|unique:seleksis,user_id',
             'tanggal_seleksi' => 'required',
         ]);
@@ -130,7 +130,7 @@ class SeleksiController extends Controller
             if ($check > 0) {
                 $response['message'] = 'Failed, User already exists';
             } else {
-                $seleksi->kegiatan_id = $request->input('kegiatan_id');
+                $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
                 $seleksi->user_id = $current_user_id;
                 $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi')." 00:00:00";
                 $seleksi->save();                
@@ -138,7 +138,7 @@ class SeleksiController extends Controller
                 $response['message'] = 'success';
             }
         } else {
-            $seleksi->kegiatan_id = $request->input('kegiatan_id');
+            $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
             $seleksi->user_id = $current_user_id;
             $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi')." 00:00:00";
             $seleksi->save();
@@ -161,7 +161,7 @@ class SeleksiController extends Controller
         $seleksi = $this->seleksi->findOrFail($id);
 
         $response['seleksi'] = $seleksi;
-        $response['kegiatan'] = $seleksi->kegiatan;
+        $response['pendaftaran'] = $seleksi->pendaftaran;
         $response['user'] = $seleksi->user;
         $response['status'] = true;
 
@@ -181,7 +181,7 @@ class SeleksiController extends Controller
         array_set($seleksi->user, 'label', $seleksi->user->name);
 
         $response['seleksi'] = $seleksi;
-        $response['kegiatan'] = $seleksi->kegiatan;
+        $response['pendaftaran'] = $seleksi->pendaftaran;
         $response['user'] = $seleksi->user;
         $response['status'] = true;
 
@@ -203,13 +203,13 @@ class SeleksiController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
-                'kegiatan_id' => 'required',
+                'pendaftaran_id' => 'required',
                 'tanggal_seleksi' => 'required',
             ]);
         } else {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|unique:seleksis,user_id',
-                'kegiatan_id' => 'required',
+                'pendaftaran_id' => 'required',
                 'tanggal_seleksi' => 'required',
             ]);
         }
@@ -221,7 +221,7 @@ class SeleksiController extends Controller
                 $response['message'] = 'Failed, username ' . $request->user_id . ' already exists';
             } else {
                 $seleksi->user_id = $request->input('user_id');
-                $seleksi->kegiatan_id = $request->input('kegiatan_id');
+                $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
                 $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi');
                 $seleksi->save();
 
@@ -229,7 +229,7 @@ class SeleksiController extends Controller
             }
         } else {
             $seleksi->user_id = $request->input('user_id');
-                $seleksi->kegiatan_id = $request->input('kegiatan_id');
+                $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
                 $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi');
                 $seleksi->save();
 
