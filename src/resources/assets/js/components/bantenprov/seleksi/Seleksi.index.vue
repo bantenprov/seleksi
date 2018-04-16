@@ -92,15 +92,21 @@ export default {
           dataClass: 'right aligned'
         },
         {
-          name: 'tanggal_seleksi',
-          title: 'Tanggal Seleksi',
-          sortField: 'tanggal_seleksi',
+          name: 'pendaftaran.tanggal_pendaftaran',
+          title: 'Pendaftaran',
+          sortField: 'pendaftaran_id',
           titleClass: 'center aligned'
         },
         {
-          name: 'pendaftaran.label',
-          title: 'Pendaftaran',
-          sortField: 'pendaftaran_id',
+          name: 'siswa.nama_siswa',
+          title: 'Nama Siswa',
+          sortField: 'nomor_un',
+          titleClass: 'center aligned'
+        },
+        {
+          name: 'nilai.sktm',
+          title: 'Nilai',
+          sortField: 'nilai_id',
           titleClass: 'center aligned'
         },
         {
