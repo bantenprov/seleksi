@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 /* Models */
 use Bantenprov\Seleksi\Models\Bantenprov\Seleksi\Seleksi;
 use Bantenprov\Pendaftaran\Models\Bantenprov\Pendaftaran\Pendaftaran;
+use Bantenprov\Siswa\Models\Bantenprov\Siswa\Siswa;
+use Bantenprov\Nilai\Models\Bantenprov\Nilai\Nilai;
 use App\User;
 
 /* Etc */
@@ -29,13 +31,17 @@ class SeleksiController extends Controller
      */
     protected $pendaftaran;
     protected $seleksi;
+    protected $siswa;
+    protected $nilai;
     protected $user;
 
-    public function __construct(Seleksi $seleksi, Pendaftaran $pendaftaran, User $user)
+    public function __construct(Seleksi $seleksi, Pendaftaran $pendaftaran, User $user, Siswa $siswa, Nilai $nilai)
     {
-        $this->seleksi      = $seleksi;
+        $this->seleksi        = $seleksi;
         $this->pendaftaran    = $pendaftaran;
-        $this->user             = $user;
+        $this->user           = $user;
+        $this->siswa          = $siswa;
+        $this->nilai          = $nilai;
     }
 
     /**
@@ -48,16 +54,16 @@ class SeleksiController extends Controller
         if (request()->has('sort')) {
             list($sortCol, $sortDir) = explode('|', request()->sort);
 
-            $query = $this->seleksi->with('pendaftaran')->with('user')->orderBy($sortCol, $sortDir);
+            $query = $this->seleksi->with('pendaftaran')->with('user')->with('siswa')->with('nilai')->orderBy($sortCol, $sortDir);
         } else {
-            $query = $this->seleksi->with('pendaftaran')->with('user')->orderBy('id', 'asc');
+            $query = $this->seleksi->with('pendaftaran')->with('user')->with('siswa')->with('nilai')->orderBy('id', 'asc');
         }
 
         if ($request->exists('filter')) {
             $query->where(function($q) use($request) {
                 $value = "%{$request->filter}%";
-                $q->where('tanggal_seleksi', 'like', $value)
-                    ->orWhere('tanggal_seleksi', 'like', $value);
+                $q->where('nilai_id', 'like', $value)
+                    ->orWhere('pendaftaran_id', 'like', $value);
             });
         }
 
@@ -79,6 +85,8 @@ class SeleksiController extends Controller
         $response = [];
 
         $pendaftarans = $this->pendaftaran->all();
+        $siswas = $this->siswa->all();
+        $nilais = $this->nilai->all();
         $users_special = $this->user->all();
         $users_standar = $this->user->find(\Auth::User()->id);
         $current_user = \Auth::User();
@@ -103,8 +111,18 @@ class SeleksiController extends Controller
             array_set($pendaftaran, 'label', $pendaftaran->kegiatan->description);
         }
 
+        foreach($siswas as $siswa){
+            array_set($siswa, 'label', $siswa->nama_siswa);
+        }
+
+        foreach($nilais as $nilai){
+            array_set($nilai, 'label', $nilai->siswa->nama_siswa);
+        }
+
         $response['current_user'] = $current_user;
         $response['pendaftaran'] = $pendaftarans;
+        $response['siswa'] = $siswas;
+        $response['nilai'] = $nilais;
         $response['status'] = true;
 
         return response()->json($response);
@@ -122,21 +140,23 @@ class SeleksiController extends Controller
         $current_user_id = $request->user_id;
 
         $validator = Validator::make($request->all(), [
-            'pendaftaran_id' => 'required',
-            'user_id' => 'required|max:16|unique:seleksis,user_id',
-            'tanggal_seleksi' => 'required',
+            'pendaftaran_id' => 'required|unique:seleksis,pendaftaran_id',
+            'user_id' => 'required',
+            'nilai_id' => 'required|unique:seleksis,nilai_id',
+            'nomor_un' => 'required|unique:seleksis,nomor_un'
         ]);
 
         if($validator->fails()){
 
-            $check = $seleksi->where('user_id', $current_user_id)->whereNull('deleted_at')->count();
+            $check = $seleksi->where('pendaftaran_id', $request->pendaftaran_id)->orWhere('nilai_id', $request->nilai_id)->orWhere('nomor_un', $request->nomor_un)->whereNull('deleted_at')->count();
 
             if ($check > 0) {
-                $response['message'] = 'Failed, User already exists';
+                $response['message'] = 'Failed, Pendaftaran, Nama Siswa, Nilai already exists';
             } else {
                 $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
                 $seleksi->user_id = $current_user_id;
-                $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi')." 00:00:00";
+                $seleksi->nomor_un = $request->input('nomor_un');
+                $seleksi->nilai_id = $request->input('nilai_id');
                 $seleksi->save();                
 
                 $response['message'] = 'success';
@@ -144,7 +164,8 @@ class SeleksiController extends Controller
         } else {
             $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
             $seleksi->user_id = $current_user_id;
-            $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi')." 00:00:00";
+            $seleksi->nomor_un = $request->input('nomor_un');
+            $seleksi->nilai_id = $request->input('nilai_id');
             $seleksi->save();
             $response['message'] = 'success';
         }
@@ -167,6 +188,8 @@ class SeleksiController extends Controller
         $response['seleksi'] = $seleksi;
         $response['pendaftaran'] = $seleksi->pendaftaran;
         $response['user'] = $seleksi->user;
+        $response['siswa'] = $seleksi->siswa;
+        $response['nilai'] = $seleksi->nilai;
         $response['status'] = true;
 
         return response()->json($response);
@@ -183,10 +206,16 @@ class SeleksiController extends Controller
         $seleksi = $this->seleksi->findOrFail($id);
 
         array_set($seleksi->user, 'label', $seleksi->user->name);
+        array_set($seleksi->pendaftaran, 'label', $seleksi->pendaftaran->kegiatan->description);
+        array_set($seleksi->siswa, 'label', $seleksi->siswa->nama_siswa);
+        array_set($seleksi->nilai, 'label', $seleksi->nilai->siswa->nama_siswa);
+
 
         $response['seleksi'] = $seleksi;
         $response['pendaftaran'] = $seleksi->pendaftaran;
         $response['user'] = $seleksi->user;
+        $response['siswa'] = $seleksi->siswa;
+        $response['nilai'] = $seleksi->nilai;
         $response['status'] = true;
 
         return response()->json($response);
@@ -201,32 +230,37 @@ class SeleksiController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $response = array();
+        $message  = array();
         $seleksi = $this->seleksi->findOrFail($id);
 
-        if ($request->input('old_user_id') == $request->input('user_id'))
-        {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
-                'pendaftaran_id' => 'required',
-                'tanggal_seleksi' => 'required',
+                'pendaftaran_id' => 'required|unique:seleksis,pendaftaran_id,'.$id,
+                'nomor_un' => 'required|unique:seleksis,nomor_un,'.$id,
+                'nilai_id' => 'required|unique:seleksis,nilai_id,'.$id,
             ]);
-        } else {
-            $validator = Validator::make($request->all(), [
-                'user_id' => 'required|unique:seleksis,user_id',
-                'pendaftaran_id' => 'required',
-                'tanggal_seleksi' => 'required',
-            ]);
-        }
 
         if ($validator->fails()) {
-            $check = $seleksi->where('user_id',$request->user_id)->whereNull('deleted_at')->count();
 
-            if ($check > 0) {
-                $response['message'] = 'Failed, username ' . $request->user_id . ' already exists';
+            foreach($validator->messages()->getMessages() as $key => $error){
+                        foreach($error AS $error_get) {
+                            array_push($message, $error_get);
+                        }
+                    }
+
+             $check_pendaftaran = $this->seleksi->where('id','!=', $id)->where('pendaftaran_id', $request->pendaftaran_id);
+             $check_siswa = $this->seleksi->where('id','!=', $id)->where('nomor_un', $request->nomor_un);
+             $check_nilai = $this->seleksi->where('id','!=', $id)->where('nilai_id', $request->nilai_id);
+
+             if($check_pendaftaran->count() > 0 || $check_siswa->count() > 0 || $check_nilai->count() > 0){
+                  $response['message'] = implode("\n",$message);
             } else {
                 $seleksi->user_id = $request->input('user_id');
                 $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
-                $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi');
+                $seleksi->nomor_un = $request->input('nomor_un');
+                $seleksi->nilai_id = $request->input('nilai_id');
                 $seleksi->save();
 
                 $response['message'] = 'success';
@@ -234,7 +268,8 @@ class SeleksiController extends Controller
         } else {
             $seleksi->user_id = $request->input('user_id');
                 $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
-                $seleksi->tanggal_seleksi = $request->input('tanggal_seleksi');
+                $seleksi->nomor_un = $request->input('nomor_un');
+                $seleksi->nilai_id = $request->input('nilai_id');
                 $seleksi->save();
 
             $response['message'] = 'success';

@@ -14,46 +14,62 @@
 
     <div class="card-body">
       <vue-form class="form-horizontal form-validation" :state="state" @submit.prevent="onSubmit">
-        <div class="form-row">
+
+     <div class="form-row mt-4">
           <div class="col-md">
             <validate tag="div">
-              <input class="form-control" v-model="model.tanggal_seleksi" required autofocus name="label" type="text" placeholder="tanggal_seleksi">
+            <label for="pendaftaran_id">Pendaftaran</label>
+            <v-select name="pendaftaran_id" v-model="model.pendaftaran" :options="pendaftaran" class="mb-4"></v-select>
 
-              <field-messages name="tanggal_seleksi" show="$invalid && $submitted" class="text-danger">
-                <small class="form-text text-success">Looks good!</small>
-                <small class="form-text text-danger" slot="required">Tanggal Seleksi is a required field</small>
-              </field-messages>
+            <field-messages name="pendaftaran_id" show="$invalid && $submitted" class="text-danger">
+              <small class="form-text text-success">Looks good!</small>
+              <small class="form-text text-danger" slot="required">Pendaftaran is a required field</small>
+            </field-messages>
             </validate>
           </div>
         </div>
 
         <div class="form-row mt-4">
-					<div class="col-md">
-						<validate tag="div">
-						<label for="pendaftaran">Pendaftaran</label>
-						<v-select name="pendaftaran" v-model="model.pendaftaran" :options="pendaftaran" class="mb-4"></v-select>
+          <div class="col-md">
+            <validate tag="div">
+            <label for="nomor_un">Siswa</label>
+            <v-select name="nomor_un" v-model="model.siswa" :options="siswa" class="mb-4"></v-select>
 
-						<field-messages name="pendaftaran" show="$invalid && $submitted" class="text-danger">
-							<small class="form-text text-success">Looks good!</small>
-							<small class="form-text text-danger" slot="required">Label is a required field</small>
-						</field-messages>
-						</validate>
-					</div>
-				</div>
+            <field-messages name="nomor_un" show="$invalid && $submitted" class="text-danger">
+              <small class="form-text text-success">Looks good!</small>
+              <small class="form-text text-danger" slot="required">Siswa is a required field</small>
+            </field-messages>
+            </validate>
+          </div>
+        </div>
 
         <div class="form-row mt-4">
-					<div class="col-md">
-						<validate tag="div">
-						<label for="user_id">Username</label>
-						<v-select name="user_id" v-model="model.user" :options="user" class="mb-4"></v-select>
+          <div class="col-md">
+            <validate tag="div">
+            <label for="nilai_id">Nilai</label>
+            <v-select name="nilai_id" v-model="model.nilai" :options="nilai" class="mb-4"></v-select>
 
-						<field-messages name="user_id" show="$invalid && $submitted" class="text-danger">
-							<small class="form-text text-success">Looks good!</small>
-							<small class="form-text text-danger" slot="required">username is a required field</small>
-						</field-messages>
-						</validate>
-					</div>
-				</div>
+            <field-messages name="nilai_id" show="$invalid && $submitted" class="text-danger">
+              <small class="form-text text-success">Looks good!</small>
+              <small class="form-text text-danger" slot="required">Nilai is a required field</small>
+            </field-messages>
+            </validate>
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="col-md">
+            <validate tag="div">
+            <label for="user_id">Username</label>
+            <v-select name="user_id" v-model="model.user" :options="user" class="mb-4"></v-select>
+
+            <field-messages name="user_id" show="$invalid && $submitted" class="text-danger">
+              <small class="form-text text-success">Looks good!</small>
+              <small class="form-text text-danger" slot="required">Username is a required field</small>
+            </field-messages>
+            </validate>
+          </div>
+        </div>
 
         <div class="form-row mt-4">
           <div class="col-md">
@@ -75,9 +91,8 @@ export default {
       .then(response => {
         if (response.data.status == true) {
           this.model.user = response.data.user,
-          this.model.old_label = response.data.seleksi.label;
-          this.model.old_user_id = response.data.seleksi.user_id;
-          this.model.tanggal_seleksi = response.data.seleksi.tanggal_seleksi;
+          this.model.siswa = response.data.siswa;
+          this.model.nilai = response.data.nilai;
           this.model.pendaftaran = response.data.pendaftaran;
         } else {
           alert('Failed');
@@ -92,6 +107,12 @@ export default {
       .then(response => {
           response.data.pendaftaran.forEach(element => {
             this.pendaftaran.push(element);
+          });
+          response.data.siswa.forEach(element => {
+            this.siswa.push(element);
+          });
+          response.data.nilai.forEach(element => {
+            this.nilai.push(element);
           });
           if(response.data.user_special == true){
             response.data.user.forEach(user_element => {
@@ -110,14 +131,15 @@ export default {
     return {
       state: {},
       model: {
-        tanggal_seleksi: "",
+        nilai: "",
+        siswa: "",
         user: "",
         pendaftaran: "",
-        old_label: "",
-        old_user_id: ""
       },
       pendaftaran: [],
-      user: []
+      user: [],
+      siswa: [],
+      nilai: [],
     }
   },
   methods: {
@@ -128,10 +150,10 @@ export default {
         return;
       } else {
         axios.put('api/seleksi/' + this.$route.params.id, {
-            tanggal_seleksi: this.model.tanggal_seleksi,
-            old_label: this.model.old_label,
-            old_user_id: this.model.old_user_id,
+            nilai_id: this.model.nilai.id,
             pendaftaran_id: this.model.pendaftaran.id,
+            nomor_un: this.model.siswa.nomor_un,
+            siswa_id: this.model.siswa.id,
             user_id: this.model.user.id
           })
           .then(response => {
@@ -155,7 +177,7 @@ export default {
       axios.get('api/seleksi/' + this.$route.params.id + '/edit')
         .then(response => {
           if (response.data.status == true) {
-            this.model.tanggal_seleksi = response.data.seleksi.tanggal_seleksi;
+            
           } else {
             alert('Failed');
           }

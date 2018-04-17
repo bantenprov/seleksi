@@ -16,7 +16,8 @@ class CreateSeleksisTable extends Migration
 			$table->increments('id');
 			$table->integer('user_id');
 			$table->integer('pendaftaran_id');
-			$table->dateTime('tanggal_seleksi')->nullable();
+			$table->integer('nomor_un');
+			$table->integer('nilai_id');
 			$table->timestamps();
 			$table->softDeletes();
 		});

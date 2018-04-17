@@ -17,15 +17,21 @@
 
         <div class="form-row mt-4">
           <div class="col-md">
-            <b>Tanggal Seleksi :</b> {{ model.tanggal_seleksi }}
+            <b>Pendaftaran :</b> {{ model.pendaftaran.label }}
           </div>
         </div>
 
         <div class="form-row mt-4">
-					<div class="col-md">
-						<b>Pendaftaran :</b> {{ model.pendaftaran.label }}
-					</div>
-				</div>
+          <div class="col-md">
+            <b>Nama Siswa :</b> {{ model.siswa.nama_siswa }}
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="col-md">
+            <b>Nilai :</b> {{ model.nilai.label }}
+          </div>
+        </div>
 
       </vue-form>
     </div>
@@ -49,9 +55,10 @@ export default {
     axios.get('api/seleksi/' + this.$route.params.id)
       .then(response => {
         if (response.data.status == true) {
-          this.model.tanggal_seleksi = response.data.seleksi.tanggal_seleksi;
+          this.model.user = response.data.user,
+          this.model.siswa = response.data.siswa;
+          this.model.nilai = response.data.nilai;
           this.model.pendaftaran = response.data.pendaftaran;
-          this.model.user = response.data.user;
           this.model.created_at = response.data.seleksi.created_at;
           this.model.updated_at = response.data.seleksi.updated_at;
         } else {
@@ -77,45 +84,18 @@ export default {
     return {
       state: {},
       model: {
-        tanggal_seleksi: "",
-        user:"",
+        nilai: "",
+        siswa: "",
+        user: "",
         pendaftaran: "",
-        created_at: "",
-        updated_at: "",
       },
-      pendaftaran: []
+      pendaftaran: [],
+      user: [],
+      siswa: [],
+      nilai: [],
     }
   },
   methods: {
-    onSubmit: function() {
-      let app = this;
-
-      if (this.state.$invalid) {
-        return;
-      } else {
-        axios.put('api/seleksi/' + this.$route.params.id, {
-            label: this.model.label,
-            description: this.model.description,
-            old_label: this.model.old_label,
-            pendaftaran_id: this.model.pendaftaran.id
-          })
-          .then(response => {
-            if (response.data.status == true) {
-              if(response.data.message == 'success'){
-                alert(response.data.message);
-                app.back();
-              }else{
-                alert(response.data.message);
-              }
-            } else {
-              alert(response.data.message);
-            }
-          })
-          .catch(function(response) {
-            alert('Break ' + response.data.message);
-          });
-      }
-    },
     back() {
       window.location = '#/admin/seleksi';
     }

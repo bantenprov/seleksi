@@ -46,7 +46,8 @@ class BantenprovSeleksiSeeder extends Seeder
         	$this->model->create([
             	'user_id' => $data['user_id'],
 				'pendaftaran_id' => $data['pendaftaran_id'],
-				'tanggal_seleksi' => $data['tanggal_seleksi'],
+				'nomor_un' => $data['nomor_un'],
+                'nilai_id' => $data['nilai_id']
 
         	]);
         
@@ -59,8 +60,10 @@ class BantenprovSeleksiSeeder extends Seeder
 			echo"\n";
 			$this->orangeText('pendaftaran_id : ').$this->greenText($data['pendaftaran_id']);
 			echo"\n";
-			$this->orangeText('tanggal_seleksi : ').$this->greenText($data['tanggal_seleksi']);
+			$this->orangeText('nomor_un : ').$this->greenText($data['nomor_un']);
 			echo"\n";
+            $this->orangeText('nilai_id : ').$this->greenText($data['nilai_id']);
+            echo"\n";
         
             echo "============[DATA]============\n\n";
         }
@@ -87,7 +90,8 @@ class BantenprovSeleksiSeeder extends Seeder
         while(($data = fgetcsv($file, 1000, ",")) !== FALSE){
             $all_data[] = ['user_id' => $data[0],
             'pendaftaran_id' => $data[1],
-            'tanggal_seleksi' => $data[2],
+            'nomor_un' => $data[2],
+            'nilai_id' => $data[3],
             ];
         }
         fclose($file);
