@@ -17,7 +17,7 @@
 
         <div class="form-row mt-4">
           <div class="col-md">
-            <b>Pendaftaran :</b> {{ model.pendaftaran.label }}
+            <b>Pendaftaran :</b> {{ model.pendaftaran.tanggal_pendaftaran }}
           </div>
         </div>
 
@@ -29,7 +29,7 @@
 
         <div class="form-row mt-4">
           <div class="col-md">
-            <b>Nilai :</b> {{ model.nilai.label }}
+            <b>Nilai :</b> {{ model.nilai.sktm }}
           </div>
         </div>
 
