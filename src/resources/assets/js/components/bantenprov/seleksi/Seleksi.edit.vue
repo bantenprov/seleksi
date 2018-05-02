@@ -29,7 +29,7 @@
           </div>
         </div>
 
-        <div class="form-row mt-4">
+       <!--  <div class="form-row mt-4">
           <div class="col-md">
             <validate tag="div">
             <label for="nomor_un">Siswa</label>
@@ -41,17 +41,17 @@
             </field-messages>
             </validate>
           </div>
-        </div>
+        </div> -->
 
         <div class="form-row mt-4">
           <div class="col-md">
             <validate tag="div">
-            <label for="nilai_id">Nilai</label>
+            <label for="nilai_id">Nama Siswa</label>
             <v-select name="nilai_id" v-model="model.nilai" :options="nilai" class="mb-4"></v-select>
 
             <field-messages name="nilai_id" show="$invalid && $submitted" class="text-danger">
               <small class="form-text text-success">Looks good!</small>
-              <small class="form-text text-danger" slot="required">Nilai is a required field</small>
+              <small class="form-text text-danger" slot="required">Nama Siswa is a required field</small>
             </field-messages>
             </validate>
           </div>
@@ -150,7 +150,7 @@ export default {
         return;
       } else {
         axios.put('api/seleksi/' + this.$route.params.id, {
-            nilai_id: this.model.nilai.id,
+            nilai_id: this.model.nilai.total,
             pendaftaran_id: this.model.pendaftaran.id,
             nomor_un: this.model.siswa.nomor_un,
             siswa_id: this.model.siswa.id,

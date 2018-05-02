@@ -13,28 +13,18 @@
     </div>
 
     <div class="card-body">
-      <vue-form class="form-horizontal form-validation" :state="state" @submit.prevent="onSubmit">
+      <dl class="row">
+          <dt class="col-4">Pendaftaran :</dt>
+          <dd class="col-5">{{ model.pendaftaran.tanggal_pendaftaran }}</dd>
 
-        <div class="form-row mt-4">
-          <div class="col-md">
-            <b>Pendaftaran :</b> {{ model.pendaftaran.tanggal_pendaftaran }}
-          </div>
-        </div>
+          <dt class="col-4">Nama Siswa :</dt>
+          <dd class="col-5">{{ model.siswa.nama_siswa }}</dd>
 
-        <div class="form-row mt-4">
-          <div class="col-md">
-            <b>Nama Siswa :</b> {{ model.siswa.nama_siswa }}
-          </div>
-        </div>
-
-        <div class="form-row mt-4">
-          <div class="col-md">
-            <b>Nilai :</b> {{ model.nilai.sktm }}
-          </div>
-        </div>
-
-      </vue-form>
+          <dt class="col-4">Nilai :</dt>
+          <dd class="col-5">{{ model.nilai }}</dd>
+      </dl>
     </div>
+
      <div class="card-footer text-muted">
         <div class="row">
           <div class="col-md">
@@ -57,7 +47,7 @@ export default {
         if (response.data.status == true) {
           this.model.user = response.data.user,
           this.model.siswa = response.data.siswa;
-          this.model.nilai = response.data.nilai;
+          this.model.nilai = response.data.seleksi.nilai_id;
           this.model.pendaftaran = response.data.pendaftaran;
           this.model.created_at = response.data.seleksi.created_at;
           this.model.updated_at = response.data.seleksi.updated_at;
@@ -68,16 +58,6 @@ export default {
       .catch(function(response) {
         alert('Break');
         window.location.href = '#/admin/seleksi';
-      }),
-
-      axios.get('api/seleksi/create')
-      .then(response => {
-          response.data.pendaftaran.forEach(element => {
-            this.pendaftaran.push(element);
-          });
-      })
-      .catch(function(response) {
-        alert('Break');
       })
   },
   data() {

@@ -104,7 +104,7 @@ export default {
           titleClass: 'center aligned'
         },
         {
-          name: 'nilai.sktm',
+          name: 'nilai_id',
           title: 'Nilai',
           sortField: 'nilai_id',
           titleClass: 'center aligned'

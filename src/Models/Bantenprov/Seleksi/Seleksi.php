@@ -34,7 +34,7 @@ class Seleksi extends Model
 
     public function nilai()
     {
-        return $this->belongsTo('Bantenprov\Nilai\Models\Bantenprov\Nilai\Nilai','nilai_id');
+        return $this->belongsTo('Bantenprov\Nilai\Models\Bantenprov\Nilai\Nilai','nilai_id','nomor_un');
     }
 
     public function user()
