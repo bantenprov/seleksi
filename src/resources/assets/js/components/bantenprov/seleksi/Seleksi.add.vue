@@ -143,7 +143,6 @@ export default {
             nilai_id: this.model.nilai.total,
             pendaftaran_id: this.model.pendaftaran.id,
             nomor_un: this.model.nilai.nomor_un,
-            siswa_id: this.model.siswa.id,
             user_id: this.model.user.id
           })
           .then(response => {
