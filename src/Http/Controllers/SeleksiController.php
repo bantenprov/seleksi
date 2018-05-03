@@ -108,15 +108,12 @@ class SeleksiController extends Controller
         array_set($current_user, 'label', $current_user->name);
 
         foreach($pendaftarans as $pendaftaran){
-            array_set($pendaftaran, 'label', $pendaftaran->kegiatan->description);
+            array_set($pendaftaran, 'label', $pendaftaran->kegiatan->label);
         }
 
-        foreach($siswas as $siswa){
-            array_set($siswa, 'label', $siswa->nama_siswa);
-        }
 
         foreach($nilais as $nilai){
-            array_set($nilai, 'label', $nilai->siswa->nama_siswa);
+            array_set($nilai, 'label', $nilai->siswa->nomor_un.' - '.$nilai->siswa->nama_siswa);
         }
 
         $response['current_user'] = $current_user;
@@ -140,7 +137,7 @@ class SeleksiController extends Controller
         $current_user_id = $request->user_id;
 
         $validator = Validator::make($request->all(), [
-            'pendaftaran_id' => 'required|unique:seleksis,pendaftaran_id',
+            'pendaftaran_id' => 'required',
             'user_id' => 'required',
             'nilai_id' => 'required|unique:seleksis,nilai_id',
             'nomor_un' => 'required|unique:seleksis,nomor_un'
@@ -148,10 +145,10 @@ class SeleksiController extends Controller
 
         if($validator->fails()){
 
-            $check = $seleksi->where('pendaftaran_id', $request->pendaftaran_id)->orWhere('nilai_id', $request->nilai_id)->orWhere('nomor_un', $request->nomor_un)->whereNull('deleted_at')->count();
+            $check = $seleksi->Where('nilai_id', $request->nilai_id)->orWhere('nomor_un', $request->nomor_un)->whereNull('deleted_at')->count();
 
             if ($check > 0) {
-                $response['message'] = 'Failed, Pendaftaran, Nama Siswa, Nilai already exists';
+                $response['message'] = 'Failed,  Nama Siswa already exists';
             } else {
                 $seleksi->pendaftaran_id = $request->input('pendaftaran_id');
                 $seleksi->user_id = $current_user_id;
@@ -203,12 +200,15 @@ class SeleksiController extends Controller
      */
     public function edit($id)
     {
-        $seleksi = $this->seleksi->findOrFail($id);
+        $seleksi = $this->seleksi->with(['pendaftaran', 'nilai', 'siswa', 'user'])->findOrFail($id);
+
 
         array_set($seleksi->user, 'label', $seleksi->user->name);
-        array_set($seleksi->pendaftaran, 'label', $seleksi->pendaftaran->kegiatan->description);
-        array_set($seleksi->siswa, 'label', $seleksi->siswa->nama_siswa);
-        array_set($seleksi->nilai, 'label', $seleksi->nilai->siswa->nama_siswa);
+        array_set($seleksi->pendaftaran, 'label', $seleksi->pendaftaran->kegiatan->label);
+             
+        
+            /*array_set($seleksi->nilai, 'label', $seleksi->nilai->nomor_un.' - '.$seleksi->nilai->siswa->nama_siswa);*/
+    
 
 
         $response['seleksi'] = $seleksi;
@@ -237,7 +237,7 @@ class SeleksiController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
-                'pendaftaran_id' => 'required|unique:seleksis,pendaftaran_id,'.$id,
+                'pendaftaran_id' => 'required',
                 'nomor_un' => 'required|unique:seleksis,nomor_un,'.$id,
                 'nilai_id' => 'required|unique:seleksis,nilai_id,'.$id,
             ]);
@@ -250,11 +250,10 @@ class SeleksiController extends Controller
                         }
                     }
 
-             $check_pendaftaran = $this->seleksi->where('id','!=', $id)->where('pendaftaran_id', $request->pendaftaran_id);
              $check_siswa = $this->seleksi->where('id','!=', $id)->where('nomor_un', $request->nomor_un);
              $check_nilai = $this->seleksi->where('id','!=', $id)->where('nilai_id', $request->nilai_id);
 
-             if($check_pendaftaran->count() > 0 || $check_siswa->count() > 0 || $check_nilai->count() > 0){
+             if($check_siswa->count() > 0 || $check_nilai->count() > 0){
                   $response['message'] = implode("\n",$message);
             } else {
                 $seleksi->user_id = $request->input('user_id');
